@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forja de Héroes — Edición Runas y Temporizadores</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Forja de Héroes — Edición Móvil</title>
     <style>
         :root {
             --bg: #130f0b; 
@@ -20,6 +20,16 @@
             --purple: #9b59b6;
         }
 
+        /* Bloqueamos la selección y comportamientos táctiles molestos a nivel global */
+        * {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            touch-action: manipulation;
+        }
+
         body {
             background-color: var(--bg);
             color: var(--text);
@@ -30,7 +40,6 @@
             justify-content: center;
             min-height: 100vh;
             margin: 0;
-            user-select: none;
             overflow-x: hidden;
             padding: 20px 0;
             position: relative;
@@ -77,7 +86,6 @@
             transform: scale(1.03);
         }
 
-        /* 🎭 VENTANAS MODALES (PERFIL Y EXTRAS) */
         .modal-overlay-menu {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -152,6 +160,8 @@
             padding: 6px;
             width: 80%;
             text-align: center;
+            -webkit-user-select: text;
+            user-select: text; /* Permitimos escribir aquí */
         }
 
         .perfil-titulo-rpg {
@@ -176,7 +186,6 @@
             font-size: 12px;
         }
 
-        /* 🏅 CONTENEDOR DE LOGROS */
         .logros-seccion {
             width: 90%;
             text-align: left;
@@ -236,7 +245,6 @@
             margin-top: 5px;
         }
 
-        /* 🔔 CONTENEDOR DE NOTIFICACIONES FLOTANTES */
         #notificaciones-container {
             position: fixed;
             top: 20px;
@@ -276,7 +284,6 @@
         .notif-alerta { font-size: 10px; color: var(--gold); text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
         .notif-titulo { font-size: 13px; font-weight: bold; color: #fff; }
 
-        /* --- INTERFAZ DEL JUEGO PRINCIPAL --- */
         .btn-toggle-pasivo {
             background-color: var(--green);
             color: white;
@@ -353,10 +360,11 @@
             transition: transform 0.04s ease-out;
             z-index: 10;
             filter: drop-shadow(0 10px 15px rgba(0,0,0,0.7));
+            /* Evita tirones visuales nativos en móviles */
+            -webkit-user-drag: none; 
         }
         .clicker-btn:active { transform: scale(0.85); }
 
-        /* CONTENEDOR RANGOS Y EVOLUCIÓN */
         .weapon-rank-container {
             width: 90%;
             max-width: 320px;
@@ -395,7 +403,6 @@
             transition: width 0.1s ease;
         }
 
-        /* BARRA DE SKILLCHECK */
         .skillcheck-container {
             width: 90%; max-width: 450px; background: #5c1e1e; height: 24px; border-radius: 6px; margin-bottom: 20px; position: relative; border: 2px solid #000; display: none; overflow: hidden;
         }
@@ -403,7 +410,6 @@
         .linea-marcador { position: absolute; width: 6px; background: #fff; height: 100%; z-index: 20; box-shadow: 0 0 8px #fff; }
         .instrucciones-barra { font-size: 12px; color: #e74c3c; font-weight: bold; margin-top: -15px; margin-bottom: 15px; display: none; }
 
-        /* NÚMEROS FLOTANTES */
         .numero-flotante {
             position: absolute; font-size: 22px; font-weight: 900; color: var(--iron); text-shadow: 0 2px 5px #000; pointer-events: none; z-index: 100; animation: flotarUp 0.6s ease-out forwards;
         }
@@ -419,7 +425,6 @@
             position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(255, 215, 0, 0.3); pointer-events: none; z-index: 3000; opacity: 0; display: none;
         }
 
-        /* MINIJUEGOS INTERNOS */
         .modal-mision-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); display: flex; align-items: center; justify-content: center; z-index: 3000; visibility: hidden; opacity: 0; transition: opacity 0.2s;
         }
@@ -434,34 +439,28 @@
         .game-view.visible { display: flex; }
         .btn-entendido { background: var(--green); color: white; border: none; padding: 10px 24px; font-weight: bold; border-radius: 8px; cursor: pointer; }
 
-        /* J0 Escudos */
         .color-box { width: 60px; height: 60px; border-radius: 12px; margin-bottom: 10px; border: 3px solid white; display: flex; align-items: center; justify-content: center; font-size: 24px; }
         .btn-color-switch { background: #34495e; color: white; border: 2px solid #5c758e; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
         .bg-azul { background: var(--mana) !important; box-shadow: 0 0 12px var(--mana); }
         .bg-rojo { background: var(--red) !important; box-shadow: 0 0 12px var(--red); }
 
-        /* J1 Glifos */
         .glifo-box { font-size: 40px; background: #1c140e; padding: 8px 25px; border-radius: 12px; margin-bottom: 10px; }
         .glifo-opciones { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; }
         .btn-glifo-opcion { background: #3d2d20; border: 2px solid #523f30; color: white; font-size: 20px; padding: 8px; border-radius: 8px; cursor: pointer; }
 
-        /* J2 Orden numérico */
         .num-secuencia-container { display: flex; gap: 10px; }
         .btn-num-orden { background: #e67e22; border: 2px solid #ff9f43; color: black; font-weight: bold; font-size: 22px; width: 55px; height: 55px; border-radius: 50%; cursor: pointer; }
         .btn-num-orden:disabled { background: #2c2520 !important; border-color: #443c35 !important; color: #665b50 !important; cursor: not-allowed; }
 
-        /* J3 Puerta Castillo */
         .defensa-box { font-size: 38px; margin-bottom: 10px; }
         .controles-defensa { display: flex; gap: 20px; width: 100%; justify-content: center; }
         .btn-direccion { background: #34495e; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 20px; cursor: pointer; font-weight: bold; }
 
-        /* J4 Cristal de Maná */
         .slider-presion-bg { width: 90%; background: #221a14; height: 20px; border-radius: 10px; position: relative; border: 2px solid #000; margin-bottom: 10px; overflow: hidden;}
         .presion-safe-zone { position: absolute; background: var(--mana); height: 100%; width: 25%; box-shadow: inset 0 0 8px #fff; left: 37%; }
         .presion-pointer { position: absolute; background: #fff; width: 6px; height: 100%; left: 0%; will-change: left; }
-        .btn-presionar-cristal { background: var(--mana); color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 80%; }
+        .btn-presionar-cristal { background: var(--mana); color: white; border: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 80%; }
 
-        /* TIENDAS */
         .paneles-tienda { display: flex; flex-direction: column; gap: 15px; width: 90%; max-width: 450px; }
         .tienda { background: var(--card); border-radius: 14px; padding: 14px; border: 2px solid #4a382a; box-shadow: 0 8px 20px rgba(0,0,0,0.6); width: 100%; box-sizing: border-box;}
         .tienda-titulo { font-size: 15px; font-weight: bold; margin-bottom: 10px; border-bottom: 2px solid #4a382a; padding-bottom: 4px; }
@@ -496,13 +495,9 @@
     <div id="notificaciones-container"></div>
 
     <div class="header-container">
-        <button class="btn-header" onclick="abrirMenu('extras-menu-overlay')">
-            Extras ⚔️
-        </button>
+        <button class="btn-header" onclick="abrirMenu('extras-menu-overlay')">Extras ⚔️</button>
         <h1>Forja de Héroes 🌋</h1>
-        <button class="btn-header" onclick="abrirMenu('perfil-menu-overlay')">
-            Perfil <span id="header-avatar-mini">🧔</span>
-        </button>
+        <button class="btn-header" onclick="abrirMenu('perfil-menu-overlay')">Perfil <span id="header-avatar-mini">🧔</span></button>
     </div>
 
     <div class="modal-overlay-menu" id="perfil-menu-overlay">
@@ -650,7 +645,7 @@
                     <div class="presion-safe-zone" id="cristal-zona-azul"></div>
                     <div class="presion-pointer" id="cristal-puntero"></div>
                 </div>
-                <button class="btn-presionar-cristal" onmousedown="presionarValvulaCristal()" onmouseup="soltarValvulaCristal()">Pulsar / Mantener Válvula</button>
+                <button class="btn-presionar-cristal" id="btn-valvula-mision4">Pulsar / Mantener Válvula</button>
             </div>
         </div>
     </div>
@@ -712,7 +707,7 @@
         let idAnimacionMision4 = null;
 
         const tiendaAuto = [{ id: 0, precioBase: 15, aporte: 1 }, { id: 1, precioBase: 100, aporte: 5 }, { id: 2, precioBase: 600, aporte: 30 }];
-        const tiendaClic = [{ id: 0, precioBase: 25, aporte: 1 }, { id: 1, precioBase: 150, carrot: 6, aporte: 1 }, { id: 1, precioBase: 150, aporte: 6 }, { id: 2, precioBase: 1200, aporte: 35 }];
+        const tiendaClic = [{ id: 0, precioBase: 25, aporte: 1 }, { id: 1, precioBase: 150, aporte: 6 }, { id: 2, precioBase: 1200, aporte: 35 }];
         const tiendaRunas = [{ id: 0, precioBase: 1500, multiplicador: 0.15 }];
         
         const misionesConfig = [
@@ -720,7 +715,7 @@
             { id: 1, coste: 1200, duracion: 18000, recompensa: 4500, titulo: "🐉 Caza Dragón", tutorial: "Pulsa la runa correcta indicada arriba." }, 
             { id: 2, coste: 6000, duracion: 45000, recompensa: 25000, titulo: "🏛️ Saqueo Ruinas", tutorial: "Pulsa los números de MENOR a MAYOR rápidamente." },
             { id: 3, coste: 20000, duracion: 90000, recompensa: 100000, titulo: "🧟 Defensa de la Puerta", tutorial: "Usa las flechas para bloquear los flancos de ataque orco." },
-            { id: 4, coste: 85000, duracion: 180000, recompensa: 500000, titulo: "💎 Extracción de Maná", tutorial: "Mantén presionado el botón para dejar la aguja dentro de la zona azul. ¡Cuidado, la zona azul se mueve de forma totalmente fluida!" }
+            { id: 4, coste: 85000, duracion: 180000, recompensa: 500000, titulo: "💎 Extracción de Maná", tutorial: "Mantén presionado para dejar la aguja dentro de la zona azul. ¡Cuidado, se mueve rápido!" }
         ];
         
         let misionesEstado = [{activa:false, inicio:0},{activa:false, inicio:0},{activa:false, inicio:0},{activa:false, inicio:0},{activa:false, inicio:0}];
@@ -771,15 +766,9 @@
             let indiceActual = 0;
 
             for (let i = 0; i < EVOLUCIONES.length; i++) {
-                if (rpg.golpesYunque >= EVOLUCIONES[i].requisitos) {
-                    actual = EVOLUCIONES[i];
-                    indiceActual = i;
-                }
+                if (rpg.golpesYunque >= EVOLUCIONES[i].requisitos) { actual = EVOLUCIONES[i]; indiceActual = i; }
             }
-
-            if (indiceActual < EVOLUCIONES.length - 1) {
-                siguiente = EVOLUCIONES[indiceActual + 1];
-            }
+            if (indiceActual < EVOLUCIONES.length - 1) siguiente = EVOLUCIONES[indiceActual + 1];
 
             document.getElementById("arma-btn").textContent = actual.emoji;
             document.getElementById("arma-nombre-txt").textContent = actual.nombre;
@@ -793,7 +782,6 @@
                 let golpesNecesariosTotales = siguiente.requisitos - actual.requisitos;
                 let faltan = siguiente.requisitos - rpg.golpesYunque;
                 let porcentaje = (golpesEnRangoActual / golpesNecesariosTotales) * 100;
-
                 textoFalta.textContent = `Faltan ${faltan} golpes para el Rango ${indiceActual + 2}`;
                 barraRelleno.style.width = `${porcentaje}%`;
             } else {
@@ -844,28 +832,16 @@
 
         function ejecutarPrestigio() {
             let favores = calcularFavoresAGanar();
-            if (favores > 0 && confirm(`¿Reiniciar forja por ${favores} Favores Reales? Se restablecerán tus recursos, tus mejoras, tu RANGO de arma y los desafíos en curso.`)) {
+            if (favores > 0 && confirm(`¿Reiniciar forja por ${favores} Favores Reales?`)) {
                 rpg.favoresReales += favores;
-                
-                rpg.hierro = 0; 
-                rpg.hierroTotalVida = 0; 
-                rpg.golpesYunque = 0; 
-                
-                rpg.cantidadesAuto = [0, 0, 0]; 
-                rpg.cantidadesClic = [0, 0, 0];
-                
-                frenesiTiempoRestante = 0; 
-                document.getElementById("frenesi").style.display = "none";
-                
+                rpg.hierro = 0; rpg.hierroTotalVida = 0; rpg.golpesYunque = 0; 
+                rpg.cantidadesAuto = [0, 0, 0]; rpg.cantidadesClic = [0, 0, 0];
+                frenesiTiempoRestante = 0; document.getElementById("frenesi").style.display = "none";
                 misionesEstado = misionesEstado.map((est, idx) => {
                     document.getElementById(`mision-progbar-${idx}`).style.display = "none";
                     return { activa: false, inicio: 0 };
                 });
-                
-                evolucionarArma(); 
-                recalcularProduccion(); 
-                guardarRpg(); 
-                actualizarUI();
+                evolucionarArma(); recalcularProduccion(); guardarRpg(); actualizarUI();
             }
         }
 
@@ -885,24 +861,40 @@
         const armaBtn = document.getElementById("arma-btn");
         const clickerArea = document.getElementById("clicker-area");
 
-        armaBtn.addEventListener("mousedown", (e) => {
-            e.preventDefault(); if (yunqueMinijuegoActivo || misionesUiActiva) return;
-            armaBtn.classList.add("cargando"); tiempoPresionado = Date.now();
+        // SOPORTE ADAPTADO PARA EVENTOS TÁCTILES MÓVILES (Evita retrasos y bugs de selección)
+        function iniciarAccionBoton(e) {
+            e.preventDefault(); 
+            if (yunqueMinijuegoActivo || misionesUiActiva) return;
+            armaBtn.classList.add("cargando"); 
+            tiempoPresionado = Date.now();
             idTemporizadorCarga = setTimeout(activarBarraYunque, 400); 
-        });
+        }
 
-        window.addEventListener("mouseup", () => {
-            armaBtn.classList.remove("cargando"); clearTimeout(idTemporizadorCarga);
-            if (yunqueMinijuegoActivo) comprobarSoltadoYunque();
-            else {
+        function finalizarAccionBoton(e) {
+            e.preventDefault();
+            armaBtn.classList.remove("cargando"); 
+            clearTimeout(idTemporizadorCarga);
+            
+            if (yunqueMinijuegoActivo) {
+                comprobarSoltadoYunque();
+            } else {
                 let duracion = Date.now() - tiempoPresionado;
                 if (duracion < 400 && tiempoPresionado > 0) {
-                    rpg.hierro += rpg.hierroPorClic; rpg.hierroTotalVida += rpg.hierroPorClic; rpg.golpesYunque++;
-                    crearEfectoVisual(rpg.hierroPorClic, "normal"); evolucionarArma(); guardarRpg();
+                    rpg.hierro += rpg.hierroPorClic; 
+                    rpg.hierroTotalVida += rpg.hierroPorClic; 
+                    rpg.golpesYunque++;
+                    crearEfectoVisual(rpg.hierroPorClic, "normal"); 
+                    evolucionarArma(); 
+                    guardarRpg();
                 }
             }
             tiempoPresionado = 0;
-        });
+        }
+
+        armaBtn.addEventListener("touchstart", iniciarAccionBoton, {passive: false});
+        armaBtn.addEventListener("touchend", finalizAccionBoton, {passive: false});
+        armaBtn.addEventListener("mousedown", iniciarAccionBoton);
+        window.addEventListener("mouseup", (e) => { if(tiempoPresionado > 0) finalizarAccionBoton(e); });
 
         function activarBarraYunque() {
             yunqueMinijuegoActivo = true; posicionMarcador = 0; direccionMarcador = 1;
@@ -1063,6 +1055,13 @@
             idAnimacionMision4 = requestAnimationFrame(actualizarFisicasMision4);
         }
 
+        // CONTROL MULTITOUCH PARA LA VÁLVULA DE LA MISIÓN 4
+        const btnValvula = document.getElementById("btn-valvula-mision4");
+        btnValvula.addEventListener("touchstart", (e) => { e.preventDefault(); juego4Presionando = true; }, {passive: false});
+        btnValvula.addEventListener("touchend", (e) => { e.preventDefault(); juego4Presionando = false; }, {passive: false});
+        btnValvula.addEventListener("mousedown", () => { juego4Presionando = true; });
+        btnValvula.addEventListener("mouseup", () => { juego4Presionando = false; });
+
         function conmutarEscudoCaravana() {
             let btn = document.getElementById("caravana-player-btn");
             if(juego0ColorPlayer === "azul") { juego0ColorPlayer = "rojo"; btn.className = "btn-color-switch bg-rojo"; btn.textContent = "Tu Escudo: ROJO"; }
@@ -1076,8 +1075,6 @@
             else finalizarMisionPorFracaso("❌ ¡Mal orden!");
         }
         function defenderCastillo(lado) { if(lado === juego3LadoAtaque) completarMisionConExito(); else finalizarMisionPorFracaso("❌ ¡Flanco indefenso!"); }
-        function presionarValvulaCristal() { juego4Presionando = true; }
-        function soltarValvulaCristal() { juego4Presionando = false; }
 
         function completarMisionConExito() {
             let id = idMisionSeleccionada; 
@@ -1229,7 +1226,21 @@
                 if(est.activa) document.getElementById(`mision-progbar-${idx}`).style.display = "block";
             });
 
-            actualizarInterruptorUI(); evolucionarArma();
+            actualizarInterruptorUI(); prevenirGestosZoomEspeciales(); evolucionarArma();
+        }
+
+        // EVITA EL DOBLE TAP PARA HACER ZOOM NATIVO EN NAVEGADORES MÓVILES
+        function prevenirGestosZoomEspeciales() {
+            document.addEventListener('touchstart', function (event) {
+                if (event.touches.length > 1) { event.preventDefault(); }
+            }, { passive: false });
+            
+            let ultimoTouchYunque = 0;
+            document.addEventListener('touchend', function (event) {
+                let ahora = (new Date()).getTime();
+                if (ahora - ultimoTouchYunque <= 300) { event.preventDefault(); }
+                ultimoTouchYunque = ahora;
+            }, false);
         }
 
         function reiniciarTodo() { if(confirm("¿Borrar todo el progreso de la partida?")) { localStorage.removeItem("forja_definitiva_save"); location.reload(); } }
