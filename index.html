@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Forja de Héroes — Edición Runas y Temporizadores</title>
     <style>
         :root {
@@ -20,6 +20,23 @@
             --purple: #9b59b6;
         }
 
+        /* Evitar selecciones raras y zooms molestos en móvil */
+        * {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            box-sizing: border-box;
+            touch-action: manipulation;
+        }
+
+        input[type="text"], select {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+
         body {
             background-color: var(--bg);
             color: var(--text);
@@ -30,7 +47,6 @@
             justify-content: center;
             min-height: 100vh;
             margin: 0;
-            user-select: none;
             overflow-x: hidden;
             padding: 20px 0;
             position: relative;
@@ -71,6 +87,7 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.5);
             transition: transform 0.1s, background 0.2s;
             white-space: nowrap;
+            -webkit-tap-highlight-color: transparent;
         }
         .btn-header:hover {
             background: #4a3c2e;
@@ -294,6 +311,7 @@
             cursor: pointer;
             font-size: 12px;
             margin-bottom: 10px;
+            -webkit-tap-highlight-color: transparent;
         }
         .btn-toggle-pasivo.desactivado { background-color: var(--red); border-color: #c0392b; }
 
@@ -360,9 +378,10 @@
             transition: transform 0.04s ease-out;
             z-index: 10;
             filter: drop-shadow(0 10px 15px rgba(0,0,0,0.7));
-            -webkit-user-select: none;
-            user-select: none;
-            -webkit-touch-callout: none;
+            background: none;
+            border: none;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
         }
         .clicker-btn:active { transform: scale(0.85); }
 
@@ -378,32 +397,10 @@
             text-align: center;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
         }
-        .weapon-rank {
-            font-size: 12px;
-            font-weight: bold;
-            color: var(--text);
-            margin-bottom: 5px;
-        }
-        .weapon-next-rank-txt {
-            font-size: 10px;
-            color: #ff9f43;
-            margin-bottom: 5px;
-            font-style: italic;
-        }
-        .weapon-progress-bar {
-            width: 100%;
-            background: #241c16;
-            height: 6px;
-            border-radius: 3px;
-            overflow: hidden;
-            border: 1px solid #3a2e24;
-        }
-        .weapon-progress-fill {
-            background: linear-gradient(90deg, var(--fire), var(--gold));
-            height: 100%;
-            width: 0%;
-            transition: width 0.1s ease;
-        }
+        .weapon-rank { font-size: 12px; font-weight: bold; color: var(--text); margin-bottom: 5px; }
+        .weapon-next-rank-txt { font-size: 10px; color: #ff9f43; margin-bottom: 5px; font-style: italic; }
+        .weapon-progress-bar { width: 100%; background: #241c16; height: 6px; border-radius: 3px; overflow: hidden; border: 1px solid #3a2e24; }
+        .weapon-progress-fill { background: linear-gradient(90deg, var(--fire), var(--gold)); height: 100%; width: 0%; transition: width 0.1s ease; }
 
         /* BARRA DE SKILLCHECK */
         .skillcheck-container {
@@ -430,7 +427,7 @@
             position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(255, 215, 0, 0.3); pointer-events: none; z-index: 3000; opacity: 0; display: none;
         }
 
-        /* MINIJUEGOS INTERNOS */
+        /* MINIJUEGOS INTERNOS MODALES */
         .modal-mision-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); display: flex; align-items: center; justify-content: center; z-index: 3000; visibility: hidden; opacity: 0; transition: opacity 0.2s;
         }
@@ -447,30 +444,30 @@
 
         /* J0 Escudos */
         .color-box { width: 60px; height: 60px; border-radius: 12px; margin-bottom: 10px; border: 3px solid white; display: flex; align-items: center; justify-content: center; font-size: 24px; }
-        .btn-color-switch { background: #34495e; color: white; border: 2px solid #5c758e; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+        .btn-color-switch { background: #34495e; color: white; border: 2px solid #5c758e; padding: 8px 16px; border-radius: 6px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
         .bg-azul { background: var(--mana) !important; box-shadow: 0 0 12px var(--mana); }
         .bg-rojo { background: var(--red) !important; box-shadow: 0 0 12px var(--red); }
 
         /* J1 Glifos */
         .glifo-box { font-size: 40px; background: #1c140e; padding: 8px 25px; border-radius: 12px; margin-bottom: 10px; }
         .glifo-opciones { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; }
-        .btn-glifo-opcion { background: #3d2d20; border: 2px solid #523f30; color: white; font-size: 20px; padding: 8px; border-radius: 8px; cursor: pointer; }
+        .btn-glifo-opcion { background: #3d2d20; border: 2px solid #523f30; color: white; font-size: 20px; padding: 8px; border-radius: 8px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 
         /* J2 Orden numérico */
         .num-secuencia-container { display: flex; gap: 10px; }
-        .btn-num-orden { background: #e67e22; border: 2px solid #ff9f43; color: black; font-weight: bold; font-size: 22px; width: 55px; height: 55px; border-radius: 50%; cursor: pointer; }
+        .btn-num-orden { background: #e67e22; border: 2px solid #ff9f43; color: black; font-weight: bold; font-size: 22px; width: 55px; height: 55px; border-radius: 50%; cursor: pointer; -webkit-tap-highlight-color: transparent; }
         .btn-num-orden:disabled { background: #2c2520 !important; border-color: #443c35 !important; color: #665b50 !important; cursor: not-allowed; }
 
         /* J3 Puerta Castillo */
         .defensa-box { font-size: 38px; margin-bottom: 10px; }
         .controles-defensa { display: flex; gap: 20px; width: 100%; justify-content: center; }
-        .btn-direccion { background: #34495e; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 20px; cursor: pointer; font-weight: bold; }
+        .btn-direccion { background: #34495e; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 20px; cursor: pointer; font-weight: bold; -webkit-tap-highlight-color: transparent; }
 
         /* J4 Cristal de Maná */
         .slider-presion-bg { width: 90%; background: #221a14; height: 20px; border-radius: 10px; position: relative; border: 2px solid #000; margin-bottom: 10px; overflow: hidden;}
         .presion-safe-zone { position: absolute; background: var(--mana); height: 100%; width: 25%; box-shadow: inset 0 0 8px #fff; left: 37%; }
         .presion-pointer { position: absolute; background: #fff; width: 6px; height: 100%; left: 0%; will-change: left; }
-        .btn-presionar-cristal { background: var(--mana); color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 80%; }
+        .btn-presionar-cristal { background: var(--mana); color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 80%; -webkit-tap-highlight-color: transparent; }
 
         /* TIENDAS */
         .paneles-tienda { display: flex; flex-direction: column; gap: 15px; width: 90%; max-width: 450px; }
@@ -486,7 +483,7 @@
         .nombre-mejora { font-weight: bold; font-size: 13px; }
         .efecto-mejora { font-size: 11px; color: #c4b4a3; margin-top: 1px; }
 
-        .btn-comprar { color: #000; border: none; padding: 8px 10px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; min-width: 90px; text-align: center; }
+        .btn-comprar { color: #000; border: none; padding: 8px 10px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; min-width: 90px; text-align: center; -webkit-tap-highlight-color: transparent; }
         .btn-clic { background: var(--fire); color: white; }
         .btn-auto { background: var(--mana); color: white; }
         .btn-mision { background: #f1c40f; color: black; }
@@ -499,12 +496,30 @@
         .progreso-mision-relleno { background: #f1c40f; height: 100%; width: 0%; }
 
         .btn-reset { background: none; border: none; color: #523f30; font-size: 11px; cursor: pointer; text-decoration: underline; margin-top: 15px; }
+
+        select.selector-tienda { background: #110d0a; color: white; border: 1px solid #523f30; padding: 8px; border-radius: 6px; width: 100%; font-family: 'Georgia', serif; font-size: 13px; margin-top: 5px; }
+
+        /* EVENTOS FLASH */
+        #evento-flotante {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(10,8,6,0.95);
+            border: 2px solid var(--gold); border-radius: 12px; padding: 15px; width: 90%; max-width: 320px;
+            z-index: 5000; text-align: center; display: none; box-shadow: 0 10px 25px rgba(0,0,0,0.9);
+        }
+        .btn-evento { background: var(--card-inner); color: white; border: 1px solid var(--gold); padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; flex: 1; }
+
     </style>
 </head>
 <body>
 
     <div class="flash-pantalla" id="flash-fx"></div>
     <div id="notificaciones-container"></div>
+
+    <div id="evento-flotante">
+        <h3 id="evento-titulo" style="margin:0 0 5px 0; color:var(--gold);">Evento</h3>
+        <p id="evento-desc" style="font-size:12px; margin-bottom:10px; color:#ddd;"></p>
+        <p style="color:var(--red); font-weight:bold; font-size:12px; margin:0 0 10px 0;">⏱️ <span id="evento-timer">30</span>s</p>
+        <div id="evento-botones" style="display:flex; gap:10px; justify-content:center; width:100%;"></div>
+    </div>
 
     <div class="header-container">
         <button class="btn-header" onclick="abrirMenu('extras-menu-overlay')">
@@ -560,6 +575,23 @@
             <h2>⚔️ Tablón de Misiones</h2>
             <p style="font-size: 11px; margin: 0 0 5px 0; color: #bca085; font-style: italic;">¡Envía a tus campeones a completar encargos especiales!</p>
             
+            <div class="tienda" style="margin-bottom:10px; text-align:left;">
+                <div class="tienda-titulo">👷 Jefes de Taller</div>
+                <select class="selector-tienda" id="select-jefe" onchange="cambiarJefe()">
+                    <option value="ninguno">Sin Jefe</option>
+                    <option value="enano">🧔 Capataz Enano (+20% Pasivo, -10% Clic)</option>
+                    <option value="torpe">🧑‍🎓 Aprendiz Torpe (A veces falla, da Frenesí sorpresas)</option>
+                </select>
+            </div>
+            <div class="tienda" style="margin-bottom:10px; text-align:left;">
+                <div class="tienda-titulo" style="color:var(--fire);">🐉 Horno Elemental</div>
+                <select class="selector-tienda" id="select-elemento" onchange="cambiarElemento()">
+                    <option value="normal">🔥 Fuego Normal</option>
+                    <option value="hielo">❄️ Hielo (Yunque Lento, Frenesí Corto)</option>
+                    <option value="sangre">🩸 Sangre (Multiplicador de Combo por Clics)</option>
+                </select>
+            </div>
+
             <div class="tienda" style="border: none; background: transparent; padding: 0;">
                 <div class="item-mejora">
                     <div class="info-mejora"><span class="nombre-mejora">🛡️ Escoltar Caravana</span><span class="efecto-mejora">Coste: 200 | Recompensa: +600</span><div class="barra-progreso-mision" id="mision-progbar-0"><div class="progreso-mision-relleno" id="mision-relleno-0"></div></div></div>
@@ -588,11 +620,14 @@
     </div>
 
     <button id="btn-toggle" class="btn-toggle-pasivo" onclick="conmutarPasivo()">⚙️ Autoforja: ACTIVADA</button>
+    <button style="width:90%; max-width:450px; background:linear-gradient(90deg, #ffd700, #b8860b); color:black; font-weight:bold; padding:8px; border-radius:8px; border:none; cursor:pointer; margin-bottom:10px;" onclick="iniciarCrafteo()">🔨 Forjar Arma Especial (Costo: 1000 🪨)</button>
+    
     <div id="frenesi" class="frenesi-banner">🔥 ¡FRENESÍ DE FORJA ACTIVADO (x10)! <span id="frenesi-tiempo">20</span>s</div>
 
     <div class="stats-grid">
         <div class="contador-container">
             <div>🪨 <span id="hierro-txt">0</span> Hierro</div>
+            <div style="color:var(--gold); font-size:14px; margin-top:2px;">💰 <span id="oro-txt">0</span> Oro</div>
             <div class="stat-sub">+<span id="hps-txt">0</span> /seg</div>
             <div class="stat-clic">Golpe: +<span id="hpc-txt">1</span></div>
             <div class="stat-total">Total: <span id="total-vida-txt">0</span> 🪙</div>
@@ -609,7 +644,8 @@
     </div>
 
     <div class="clicker-area" id="clicker-area">
-        <div class="clicker-btn" id="arma-btn">🔪</div>
+        <div id="combo-sangre-ui" style="position:absolute; top:-10px; color:#ff4757; font-weight:bold; font-size:20px; display:none; z-index:50;">🩸 x<span id="combo-sangre-txt">1.0</span></div>
+        <button class="clicker-btn" id="arma-btn">🔪</button>
     </div>
 
     <div class="weapon-rank-container">
@@ -715,15 +751,16 @@
 
     <script>
         let rpg = { 
-            hierro: 0, hierroTotalVida: 0, golpesYunque: 0, favoresReales: 0, 
+            hierro: 0, oro: 0, hierroTotalVida: 0, golpesYunque: 0, favoresReales: 0, 
             cantidadesAuto: [0, 0, 0], cantidadesClic: [0, 0, 0], cantidadesRunas: [0], pasivoActivo: true,
             nombreJugador: "Herrero Anónimo", avatarJugador: "🧔", misionesCompletadas: 0,
-            logrosDesbloqueados: [false, false, false, false, false, false, false, false]
+            logrosDesbloqueados: [false, false, false, false, false, false, false, false],
+            jefeActivo: 'ninguno', elementoActivo: 'normal', mejorasMercader: 0
         };
         let idAnimacionMision4 = null;
 
         const tiendaAuto = [{ id: 0, precioBase: 15, aporte: 1 }, { id: 1, precioBase: 100, aporte: 5 }, { id: 2, precioBase: 600, aporte: 30 }];
-        const tiendaClic = [{ id: 0, precioBase: 25, aporte: 1 }, { id: 1, precioBase: 150, carrot: 6, aporte: 1 }, { id: 1, precioBase: 150, aporte: 6 }, { id: 2, precioBase: 1200, aporte: 35 }];
+        const tiendaClic = [{ id: 0, precioBase: 25, aporte: 1 }, { id: 1, precioBase: 150, aporte: 6 }, { id: 2, precioBase: 1200, aporte: 35 }];
         const tiendaRunas = [{ id: 0, precioBase: 1500, multiplicador: 0.15 }];
         
         const misionesConfig = [
@@ -744,11 +781,12 @@
             { requisitos: 1000, emoji: "✨", nombre: "Rango V: Hoja Divina Excalibur", dificultad: 2.2 }
         ];
 
-        let tiempoPresionado = 0, idTemporizadorCarga = null, yunqueMinijuegoActivo = false;
+        let tiempoPresionado = 0, idTemporizadorCarga = null, yunqueMinijuegoActivo = false, modoCrafteo = false;
         let posicionMarcador = 0, direccionMarcador = 1, posicionZonaVerde = 0, direccionZonaVerde = 1;
         let idAnimacionBarra = null, multiplicadorVelocidadArma = 1.0, zonaVerdeMin = 0, zonaVerdeMax = 0;
         let frenesiTiempoRestante = 0, idIntervaloFrenesi = null;
         let misionesUiActiva = false, idMisionSeleccionada = null, tiempoMisionRestante = 0, idIntervaloMisionTimer = null;
+        let comboSangre = 1, ultimoClic = 0;
 
         let juego0ColorObjetivo = "azul", juego0ColorPlayer = "azul";
         let glifoSimbolos = ["🪓", "🏹", "🛡️", "🔥"], glifoObjetivoActual = "";
@@ -758,22 +796,28 @@
         let juego4PresionActual = 10, juego4Presionando = false;
         let juego4ZonaAzulPos = 37, juego4ZonaAzulDireccion = 1;
 
+        let timerEventos = 180, eventoActual = null, tiempoEvento = 0, buffInspeccion = 0, debuffInspeccion = 0, olaCalor = 0;
+
         function abrirMenu(id) { document.getElementById(id).classList.add("abierto"); }
         function cerrarMenu(id) { document.getElementById(id).classList.remove("abierto"); }
 
         function cambiarAvatar() {
             rpg.avatarJugador = document.getElementById("avatar-selector").value;
-            document.getElementById("avatar-img").textContent = rpg.avatarJugador;
-            document.getElementById("header-avatar-mini").textContent = rpg.avatarJugador;
-            guardarRpg();
+            guardarRpg(); actualizarSelectoresVisuales();
         }
         function guardarNombre() { rpg.nombreJugador = document.getElementById("nombre-perfil").value || "Herrero Anónimo"; guardarRpg(); }
+        function cambiarJefe() { rpg.jefeActivo = document.getElementById("select-jefe").value; recalcularProduccion(); guardarRpg(); }
+        function cambiarElemento() { rpg.elementoActivo = document.getElementById("select-elemento").value; recalcularProduccion(); guardarRpg(); }
 
-        function conmutarPasivo() { rpg.pasivoActivo = !rpg.pasivoActivo; recalcularProduccion(); actualizarInterruptorUI(); guardarRpg(); }
-        function actualizarInterruptorUI() {
+        function conmutarPasivo() { rpg.pasivoActivo = !rpg.pasivoActivo; recalcularProduccion(); actualizarSelectoresVisuales(); guardarRpg(); }
+        function actualizarSelectoresVisuales() {
+            document.getElementById("avatar-img").textContent = rpg.avatarJugador;
+            document.getElementById("header-avatar-mini").textContent = rpg.avatarJugador;
             const btn = document.getElementById("btn-toggle");
             btn.textContent = rpg.pasivoActivo ? "⚙️ Autoforja: ACTIVADA" : "💤 Autoforja: PAUSADA";
             btn.className = rpg.pasivoActivo ? "btn-toggle-pasivo" : "btn-toggle-pasivo desactivado";
+            document.getElementById("select-jefe").value = rpg.jefeActivo || 'ninguno';
+            document.getElementById("select-elemento").value = rpg.elementoActivo || 'normal';
         }
 
         function evolucionarArma() {
@@ -837,18 +881,26 @@
             comprobarLogros();
             let totalLogrosDesbloqueados = rpg.logrosDesbloqueados.filter(Boolean).length;
             let multiplierLogros = 1 + (totalLogrosDesbloqueados * 0.05);
-            let bonusPrestige = 1 + rpg.favoresReales;
             let multiplierRunas = 1 + ((rpg.cantidadesRunas[0] || 0) * tiendaRunas[0].multiplicador);
+            let bonusPrestige = 1 + rpg.favoresReales;
 
-            rpg.hierroPorSegundo = 0;
-            if (rpg.pasivoActivo) {
-                tiendaAuto.forEach(item => { rpg.hierroPorSegundo += (rpg.cantidadesAuto[item.id] || 0) * item.aporte; });
-                rpg.hierroPorSegundo *= (bonusPrestige * multiplierLogros);
-            }
-            rpg.hierroPorClic = 1;
-            tiendaClic.forEach(item => { rpg.hierroPorClic += (rpg.cantidadesClic[item.id] || 0) * item.aporte; });
-            rpg.hierroPorClic *= (bonusPrestige * multiplierLogros * multiplierRunas);
-            if (frenesiTiempoRestante > 0) rpg.hierroPorClic *= 10;
+            let baseHps = 0;
+            tiendaAuto.forEach(item => { baseHps += (rpg.cantidadesAuto[item.id] || 0) * item.aporte; });
+            
+            let baseHpc = 1;
+            tiendaClic.forEach(item => { baseHpc += (rpg.cantidadesClic[item.id] || 0) * item.aporte; });
+            baseHpc += (rpg.mejorasMercader || 0) * 5; // Bonus Mercader
+
+            let bossP = 1, bossC = 1;
+            if(rpg.jefeActivo === 'enano') { bossP = 1.2; bossC = 0.9; }
+
+            let eventP = 1, eventC = 1;
+            if(buffInspeccion > 0) eventP = 2.0;
+            if(debuffInspeccion > 0) eventP = 0.9;
+            if(olaCalor > 0) eventC = 2.0;
+
+            rpg.hierroPorSegundo = rpg.pasivoActivo ? (baseHps * bonusPrestige * multiplierLogros * bossP * eventP) : 0;
+            rpg.hierroPorClicBase = (baseHpc * bonusPrestige * multiplierLogros * multiplierRunas * bossC * eventC);
         }
 
         function calcularFavoresAGanar() { return rpg.hierroTotalVida < 20000 ? 0 : Math.floor(Math.sqrt(rpg.hierroTotalVida / 20000)); }
@@ -859,8 +911,10 @@
                 rpg.favoresReales += favores;
                 
                 rpg.hierro = 0; 
+                rpg.oro = 0;
                 rpg.hierroTotalVida = 0; 
                 rpg.golpesYunque = 0; 
+                rpg.mejorasMercader = 0;
                 
                 rpg.cantidadesAuto = [0, 0, 0]; 
                 rpg.cantidadesClic = [0, 0, 0];
@@ -893,33 +947,67 @@
             if (rpg.hierro >= precio) { rpg.hierro -= precio; rpg.cantidadesRunas[id] = (rpg.cantidadesRunas[id] || 0) + 1; recalcularProduccion(); guardarRpg(); actualizarUI(); }
         }
 
+        function iniciarCrafteo() {
+            if (rpg.hierro >= 1000 && !yunqueMinijuegoActivo) {
+                rpg.hierro -= 1000;
+                modoCrafteo = true;
+                actualizarUI();
+                activarBarraYunque();
+            }
+        }
+
+        // --- SOLUCIÓN UNIFICADA PARA EVENTOS MÓVILES Y ESCRITORIO ---
         const armaBtn = document.getElementById("arma-btn");
         const clickerArea = document.getElementById("clicker-area");
 
-        // --- SOLUCIÓN UNIFICADA PARA EVENTOS MÓVILES Y ESCRITORIO ---
         function handlerIniciarPresion(e) {
             if (yunqueMinijuegoActivo || misionesUiActiva) return;
             if (e.cancelable) e.preventDefault();
             
-            armaBtn.classList.add("cargando"); 
+            armaBtn.style.transform = "scale(0.85)";
             tiempoPresionado = Date.now();
-            idTemporizadorCarga = setTimeout(activarBarraYunque, 400); 
+            // Disparar barra de precisión si mantiene pulsado más de 400ms (Solo si no está en crafteo)
+            idTemporizadorCarga = setTimeout(() => {
+                if(!modoCrafteo) activarBarraYunque();
+            }, 400); 
         }
 
         function handlerFinalizarPresion(e) {
             if (tiempoPresionado === 0) return;
-            armaBtn.classList.remove("cargando"); 
+            armaBtn.style.transform = "scale(1)";
             clearTimeout(idTemporizadorCarga);
             
             if (yunqueMinijuegoActivo) {
                 comprobarSoltadoYunque();
-            } else {
+            } else if (!modoCrafteo) {
                 let duracion = Date.now() - tiempoPresionado;
                 if (duracion < 400 && tiempoPresionado > 0) {
-                    rpg.hierro += rpg.hierroPorClic; 
-                    rpg.hierroTotalVida += rpg.hierroPorClic; 
+                    
+                    // Lógica Elemento: Sangre
+                    if (rpg.elementoActivo === 'sangre') {
+                        if (Date.now() - ultimoClic > 2000) comboSangre = 1;
+                        comboSangre = Math.min(5, comboSangre + 0.1);
+                        ultimoClic = Date.now();
+                        document.getElementById("combo-sangre-ui").style.display = "block";
+                        document.getElementById("combo-sangre-txt").textContent = comboSangre.toFixed(1);
+                    } else {
+                        comboSangre = 1;
+                        document.getElementById("combo-sangre-ui").style.display = "none";
+                    }
+
+                    // Lógica Jefe: Aprendiz Torpe
+                    if (rpg.jefeActivo === 'torpe' && Math.random() < 0.05) {
+                        crearEfectoVisual("✨ ¡Suerte Torpe!", "critico");
+                        frenesiTiempoRestante = 10;
+                    }
+
+                    let hpcActual = rpg.hierroPorClicBase * comboSangre;
+                    if(frenesiTiempoRestante > 0) hpcActual *= 10;
+
+                    rpg.hierro += hpcActual; 
+                    rpg.hierroTotalVida += hpcActual; 
                     rpg.golpesYunque++;
-                    crearEfectoVisual(rpg.hierroPorClic, "normal"); 
+                    crearEfectoVisual(Math.floor(hpcActual), "normal"); 
                     evolucionarArma(); 
                     guardarRpg();
                 }
@@ -942,12 +1030,26 @@
             posicionZonaVerde = Math.floor(Math.random() * 75);
             document.getElementById("skillcheck-bar").style.display = "block";
             document.getElementById("skillcheck-instrucciones").style.display = "block";
+            
+            if (modoCrafteo) {
+                document.getElementById("skillcheck-instrucciones").textContent = "¡SUELTA EL CLIC EN EL PURO CENTRO!";
+                document.getElementById("skillcheck-instrucciones").style.color = "var(--gold)";
+            } else {
+                document.getElementById("skillcheck-instrucciones").textContent = "¡SUELTA EL CLICK EN LA ZONA VERDE!";
+                document.getElementById("skillcheck-instrucciones").style.color = "var(--red)";
+            }
+            
             idAnimacionBarra = requestAnimationFrame(moverElementsBarraYunque);
         }
 
         function moverElementsBarraYunque() {
             if (!yunqueMinijuegoActivo) return;
-            posicionMarcador += (2.8 * multiplicadorVelocidadArma * direccionMarcador);
+
+            let velArma = 2.8 * multiplicadorVelocidadArma;
+            if(rpg.elementoActivo === 'hielo') velArma *= 0.5;
+            if(olaCalor > 0) velArma *= 2.0;
+
+            posicionMarcador += (velArma * direccionMarcador);
             if (posicionMarcador >= 100) { posicionMarcador = 100; direccionMarcador = -1; }
             else if (posicionMarcador <= 0) { posicionMarcador = 0; direccionMarcador = 1; }
             document.getElementById("skillcheck-marker").style.left = posicionMarcador + "%";
@@ -973,31 +1075,92 @@
             document.getElementById("skillcheck-bar").style.display = "none";
             document.getElementById("skillcheck-instrucciones").style.display = "none";
 
-            if (posicionMarcador >= zonaVerdeMin && posicionMarcador <= zonaVerdeMax) {
-                triggerFlashFX();
-                frenesiTiempoRestante = 20; recalcularProduccion();
-                let crit = rpg.hierroPorClic * 6; rpg.hierro += crit; rpg.hierroTotalVida += crit;
-                crearEfectoVisual("⚡ ¡FRENESÍ x10! +" + Math.floor(crit), "critico");
-                document.getElementById("frenesi-tiempo").textContent = frenesiTiempoRestante;
-                document.getElementById("frenesi").style.display = "block";
-                clearInterval(idIntervaloFrenesi);
-                idIntervaloFrenesi = setInterval(() => {
-                    frenesiTiempoRestante--;
-                    if (frenesiTiempoRestante <= 0) { clearInterval(idIntervaloFrenesi); document.getElementById("frenesi").style.display = "none"; }
-                    else document.getElementById("frenesi-tiempo").textContent = frenesiTiempoRestante;
-                    recalcularProduccion();
-                }, 1000);
+            if (modoCrafteo) {
+                modoCrafteo = false;
+                let centroZonaVerde = zonaVerdeMin + 11;
+                let distancia = Math.abs(posicionMarcador - centroZonaVerde);
+                
+                if (distancia <= 3) {
+                    rpg.oro += 1000;
+                    crearEfectoVisual("✨ LEGENDARIA +1000💰", "critico");
+                } else if (distancia <= 8) {
+                    rpg.oro += 200;
+                    crearEfectoVisual("💜 ÉPICA +200💰", "critico");
+                } else if (distancia <= 15) {
+                    rpg.oro += 50;
+                    crearEfectoVisual("💙 RARA +50💰", "critico");
+                } else {
+                    rpg.oro += 10;
+                    crearEfectoVisual("🤍 Común +10💰", "normal");
+                }
             } else {
-                let castigo = Math.max(5, Math.floor(rpg.hierro * 0.04));
-                rpg.hierro = Math.max(0, rpg.hierro - castigo);
-                crearEfectoVisual(`❌ ¡Fallo! -${castigo}`, "fallo");
+                if (posicionMarcador >= zonaVerdeMin && posicionMarcador <= zonaVerdeMax) {
+                    triggerFlashFX();
+                    frenesiTiempoRestante = (rpg.elementoActivo === 'hielo') ? 10 : 20;
+                    recalcularProduccion();
+                    let crit = rpg.hierroPorClicBase * 6; rpg.hierro += crit; rpg.hierroTotalVida += crit;
+                    crearEfectoVisual("⚡ ¡FRENESÍ x10! +" + Math.floor(crit), "critico");
+                    document.getElementById("frenesi-tiempo").textContent = frenesiTiempoRestante;
+                    document.getElementById("frenesi").style.display = "block";
+                    clearInterval(idIntervaloFrenesi);
+                    idIntervaloFrenesi = setInterval(() => {
+                        frenesiTiempoRestante--;
+                        if (frenesiTiempoRestante <= 0) { clearInterval(idIntervaloFrenesi); document.getElementById("frenesi").style.display = "none"; }
+                        else document.getElementById("frenesi-tiempo").textContent = frenesiTiempoRestante;
+                        recalcularProduccion();
+                    }, 1000);
+                } else {
+                    let castigo = Math.max(5, Math.floor(rpg.hierro * 0.04));
+                    rpg.hierro = Math.max(0, rpg.hierro - castigo);
+                    crearEfectoVisual(`❌ ¡Fallo! -${castigo}`, "fallo");
+                }
             }
             guardarRpg(); actualizarUI();
         }
 
+        // EVENTOS FLASH ALEATORIOS
+        function lanzarEventoAleatorio() {
+            let r = Math.random();
+            document.getElementById("evento-flotante").style.display = "block";
+            tiempoEvento = 30;
+            let btnBox = document.getElementById("evento-botones");
+            btnBox.innerHTML = "";
+
+            if (r < 0.33) {
+                eventoActual = "inspeccion";
+                document.getElementById("evento-titulo").textContent = "👑 Inspección Real";
+                document.getElementById("evento-desc").textContent = "El Rey exige 500 🪨 ya mismo.";
+                let b1 = document.createElement("button"); b1.className = "btn-evento"; b1.textContent = "Pagar 500"; b1.onclick = () => { if(rpg.hierro>=500){rpg.hierro-=500; buffInspeccion=300; cerrarEvento();} };
+                let b2 = document.createElement("button"); b2.className = "btn-evento"; b2.textContent = "Rechazar"; b2.onclick = () => { debuffInspeccion=300; cerrarEvento(); };
+                btnBox.appendChild(b1); btnBox.appendChild(b2);
+            } else if (r < 0.66) {
+                eventoActual = "mercader";
+                document.getElementById("evento-titulo").textContent = "🧙‍♂️ Mercader Ambulante";
+                document.getElementById("evento-desc").textContent = "Vende Fuelle Mágico (+5 Clic) por 500 🪨.";
+                let b1 = document.createElement("button"); b1.className = "btn-evento"; b1.textContent = "Comprar"; b1.onclick = () => { if(rpg.hierro>=500){rpg.hierro-=500; rpg.mejorasMercader=(rpg.mejorasMercader||0)+1; cerrarEvento();} };
+                let b2 = document.createElement("button"); b2.className = "btn-evento"; b2.textContent = "Ignorar"; b2.onclick = () => { cerrarEvento(); };
+                btnBox.appendChild(b1); btnBox.appendChild(b2);
+            } else {
+                eventoActual = "calor";
+                document.getElementById("evento-titulo").textContent = "🌋 Ola de Calor";
+                document.getElementById("evento-desc").textContent = "El horno arde. Clic x2 pero el Yunque va al doble de velocidad.";
+                olaCalor = 30;
+                let b1 = document.createElement("button"); b1.className = "btn-evento"; b1.textContent = "¡A forjar!"; b1.onclick = () => { cerrarEvento(); };
+                btnBox.appendChild(b1);
+            }
+        }
+
+        function cerrarEvento(timeout = false) {
+            if(timeout && eventoActual === 'inspeccion') debuffInspeccion = 300;
+            eventoActual = null;
+            document.getElementById("evento-flotante").style.display = "none";
+            recalcularProduccion();
+        }
+
         function abrirTutorialMision(id) {
             if (misionesUiActiva || yunqueMinijuegoActivo) return;
-            let config = misionesConfig[id];
+            let config = misionesConfig.find(m => m.id === id);
+            if (!config) return;
             if (rpg.hierro >= config.coste && !misionesEstado[id].activa) {
                 rpg.hierro -= config.coste; idMisionSeleccionada = id; misionesUiActiva = true; 
                 cerrarMenu('extras-menu-overlay');
@@ -1013,7 +1176,10 @@
 
         function ocultarVistasDeJuego() {
             document.getElementById("view-tutorial").style.display = "none";
-            for(let i=0; i<5; i++) document.getElementById(`view-game-${i}`).classList.remove("visible");
+            for(let i=0; i<=4; i++) {
+                let el = document.getElementById(`view-game-${i}`);
+                if(el) el.classList.remove("visible");
+            }
         }
 
         function comenzarMinijuegoTrasEntendido() {
@@ -1040,7 +1206,7 @@
                     if(!juego2ListaNumeros.includes(n)) juego2ListaNumeros.push(n);
                 }
                 juego2IndiceSiguiente = 0;
-                let container = document.getElementById("ruunas-numeros-box") || document.getElementById("ruinas-numeros-box"); 
+                let container = document.getElementById("ruinas-numeros-box"); 
                 container.innerHTML = "";
                 let visuales = [...juego2ListaNumeros].sort(() => Math.random() - 0.5);
                 visuales.forEach(num => {
@@ -1097,13 +1263,15 @@
             idAnimacionMision4 = requestAnimationFrame(actualizarFisicasMision4);
         }
 
-        // Soporte móvil para la Válvula de Maná (Misión 4)
-        const btnValvula = document.getElementById("btn-valvula-mana");
-        if(btnValvula) {
-            btnValvula.addEventListener("mousedown", presionarValvulaCristal);
-            btnValvula.addEventListener("mouseup", soltarValvulaCristal);
-            btnValvula.addEventListener("touchstart", (e) => { e.preventDefault(); presionarValvulaCristal(); }, { passive: false });
-            btnValvula.addEventListener("touchend", soltarValvulaCristal, { passive: true });
+        // Corrección de controles táctiles en la válvula del Cristal de Maná (Misión 4)
+        const btnValvulaM4 = document.getElementById("btn-valvula-mana");
+        function activarVálvulaM4(e) { e.preventDefault(); juego4Presionando = true; }
+        function desactivarVálvulaM4(e) { e.preventDefault(); juego4Presionando = false; }
+        if(btnValvulaM4) {
+            btnValvulaM4.addEventListener("mousedown", activarVálvulaM4);
+            btnValvulaM4.addEventListener("touchstart", activarVálvulaM4, { passive: false });
+            btnValvulaM4.addEventListener("mouseup", desactivarVálvulaM4);
+            window.addEventListener("touchend", desactivarVálvulaM4, { passive: true });
         }
 
         function conmutarEscudoCaravana() {
@@ -1119,8 +1287,6 @@
             else finalizarMisionPorFracaso("❌ ¡Mal orden!");
         }
         function defenderCastillo(lado) { if(lado === juego3LadoAtaque) completarMisionConExito(); else finalizarMisionPorFracaso("❌ ¡Flanco indefenso!"); }
-        function presionarValvulaCristal() { juego4Presionando = true; }
-        function soltarValvulaCristal() { juego4Presionando = false; }
 
         function completarMisionConExito() {
             let id = idMisionSeleccionada; 
@@ -1148,7 +1314,7 @@
                 let id = config.id, estado = misionesEstado[id];
                 let btn = document.getElementById(`btn-mision-${id}`);
                 
-                if (estado.activa) {
+                if (estado && estado.activa && btn) {
                     let transcurrido = ahora - estado.inicio;
                     let restanteMilisegundos = config.duracion - transcurrido;
                     let porc = Math.min(100, (transcurrido / config.duracion) * 100);
@@ -1186,8 +1352,9 @@
 
         function actualizarUI() {
             document.getElementById("hierro-txt").textContent = Math.floor(rpg.hierro);
+            document.getElementById("oro-txt").textContent = Math.floor(rpg.oro);
             document.getElementById("hps-txt").textContent = Math.floor(rpg.hierroPorSegundo);
-            document.getElementById("hpc-txt").textContent = Math.floor(rpg.hierroPorClic);
+            document.getElementById("hpc-txt").textContent = Math.floor(rpg.hierroPorClicBase);
             document.getElementById("total-vida-txt").textContent = Math.floor(rpg.hierroTotalVida);
             
             document.getElementById("favor-txt").textContent = rpg.favoresReales;
@@ -1218,37 +1385,38 @@
                 let precio = obtenerPrecio(item.precioBase, rpg.cantidadesAuto[item.id] || 0);
                 document.getElementById(`precio-mejora-${item.id}`).textContent = precio;
                 document.getElementById(`cant-mejora-${item.id}`).textContent = rpg.cantidadesAuto[item.id] || 0;
-                document.getElementById(`btn-mejora-${item.id}`).disabled = (rpg.hierro < precio || yunqueMinijuegoActivo);
+                document.getElementById(`btn-mejora-${item.id}`).disabled = (rpg.hierro < precio || yunqueMinijuegoActivo || modoCrafteo);
             });
 
             tiendaClic.forEach(item => {
                 let precio = obtenerPrecio(item.precioBase, rpg.cantidadesClic[item.id] || 0);
                 document.getElementById(`precio-cmejora-${item.id}`).textContent = precio;
                 document.getElementById(`cant-cmejora-${item.id}`).textContent = rpg.cantidadesClic[item.id] || 0;
-                document.getElementById(`btn-cmejora-${item.id}`).disabled = (rpg.hierro < precio || yunqueMinijuegoActivo);
+                document.getElementById(`btn-cmejora-${item.id}`).disabled = (rpg.hierro < precio || yunqueMinijuegoActivo || modoCrafteo);
             });
 
             let precioRuna = obtenerPrecioRuna(tiendaRunas[0].precioBase, rpg.cantidadesRunas[0] || 0);
             document.getElementById("precio-runa-0").textContent = precioRuna;
             document.getElementById("cant-runa-0").textContent = rpg.cantidadesRunas[0] || 0;
-            document.getElementById("btn-runa-0").disabled = (rpg.hierro < precioRuna || yunqueMinijuegoActivo);
+            document.getElementById("btn-runa-0").disabled = (rpg.hierro < precioRuna || yunqueMinijuegoActivo || modoCrafteo);
 
             misionesConfig.forEach(config => {
                 if (!misionesEstado[config.id].activa) {
                     let btn = document.getElementById(`btn-mision-${config.id}`);
-                    btn.disabled = (rpg.hierro < config.coste || yunqueMinijuegoActivo);
+                    if (btn) btn.disabled = (rpg.hierro < config.coste || yunqueMinijuegoActivo || modoCrafteo);
                 }
             });
             recalcularProduccion();
         }
 
-        function guardarRpg() { localStorage.setItem("forja_definitiva_save", JSON.stringify(rpg)); }
+        function guardarRpg() { localStorage.setItem("forja_def_save", JSON.stringify(rpg)); }
         function cargarRpg() {
-            let data = localStorage.getItem("forja_definitiva_save");
+            let data = localStorage.getItem("forja_def_save");
             if (data) {
                 try {
                     let c = JSON.parse(data);
                     if(c.hierro !== undefined) rpg.hierro = c.hierro;
+                    if(c.oro !== undefined) rpg.oro = c.oro;
                     if(c.hierroTotalVida !== undefined) rpg.hierroTotalVida = c.hierroTotalVida;
                     if(c.golpesYunque !== undefined) rpg.golpesYunque = c.golpesYunque;
                     if(c.favoresReales !== undefined) rpg.favoresReales = c.favoresReales;
@@ -1260,27 +1428,66 @@
                     if(c.avatarJugador !== undefined) rpg.avatarJugador = c.avatarJugador;
                     if(c.misionesCompletadas !== undefined) rpg.misionesCompletadas = c.misionesCompletadas;
                     if(Array.isArray(c.logrosDesbloqueados)) rpg.logrosDesbloqueados = c.logrosDesbloqueados;
+                    if(c.jefeActivo !== undefined) rpg.jefeActivo = c.jefeActivo;
+                    if(c.elementoActivo !== undefined) rpg.elementoActivo = c.elementoActivo;
+                    if(c.mejorasMercader !== undefined) rpg.mejorasMercader = c.mejorasMercader;
                 } catch(e){}
             }
             if(!rpg.cantidadesRunas) rpg.cantidadesRunas = [0];
             document.getElementById("nombre-perfil").value = rpg.nombreJugador;
-            document.getElementById("avatar-selector").value = rpg.avatarJugador;
-            document.getElementById("avatar-img").textContent = rpg.avatarJugador;
-            document.getElementById("header-avatar-mini").textContent = rpg.avatarJugador;
             
             misionesEstado.forEach((est, idx) => {
-                if(est.activa) document.getElementById(`mision-progbar-${idx}`).style.display = "block";
+                if(est.activa) {
+                    let mProg = document.getElementById(`mision-progbar-${idx}`);
+                    if (mProg) mProg.style.display = "block";
+                }
             });
 
-            actualizarInterruptorUI(); evolucionarArma();
+            actualizarSelectoresVisuales(); evolucionarArma();
         }
 
-        function reiniciarTodo() { if(confirm("¿Borrar todo el progreso de la partida?")) { localStorage.removeItem("forja_definitiva_save"); location.reload(); } }
+        function reiniciarTodo() { if(confirm("¿Borrar todo el progreso de la partida?")) { localStorage.removeItem("forja_def_save"); location.reload(); } }
 
+        // RELOJ PRINCIPAL (100ms)
         setInterval(() => {
-            if (rpg.hierroPorSegundo > 0 && rpg.pasivoActivo) { rpg.hierro += (rpg.hierroPorSegundo / 10); rpg.hierroTotalVida += (rpg.hierroPorSegundo / 10); }
+            if (rpg.hierroPorSegundo > 0 && rpg.pasivoActivo) { 
+                let rngSkip = false;
+                if(rpg.jefeActivo === 'torpe' && Math.random() < 0.1) rngSkip = true; // 10% probabilidad de que el torpe falle
+                
+                if(!rngSkip) {
+                    rpg.hierro += (rpg.hierroPorSegundo / 10); 
+                    rpg.hierroTotalVida += (rpg.hierroPorSegundo / 10); 
+                }
+            }
+
+            // Reset combo sangre
+            if(rpg.elementoActivo === 'sangre' && comboSangre > 1 && (Date.now() - ultimoClic > 2000)) {
+                comboSangre = 1;
+                document.getElementById("combo-sangre-ui").style.display = "none";
+            }
+
             procesarMisionesEnTiempoReal(); actualizarUI();
         }, 100);
+
+        // RELOJ DE EVENTOS FLASH (1 segundo)
+        setInterval(() => {
+            timerEventos--;
+            if (timerEventos <= 0 && eventoActual === null) {
+                lanzarEventoAleatorio();
+                timerEventos = Math.floor(Math.random() * 60) + 180; // 3 o 4 minutos
+            }
+
+            if (eventoActual) {
+                tiempoEvento--;
+                document.getElementById("evento-timer").textContent = tiempoEvento;
+                if (tiempoEvento <= 0) cerrarEvento(true);
+            }
+
+            if (buffInspeccion > 0) { buffInspeccion--; if(buffInspeccion === 0) recalcularProduccion(); }
+            if (debuffInspeccion > 0) { debuffInspeccion--; if(debuffInspeccion === 0) recalcularProduccion(); }
+            if (olaCalor > 0) { olaCalor--; if(olaCalor === 0) recalcularProduccion(); }
+
+        }, 1000);
 
         setInterval(guardarRpg, 8000);
         cargarRpg();
