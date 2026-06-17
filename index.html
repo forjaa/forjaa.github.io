@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forja de Héroes — Edición Runas y Temporizadores</title>
     <style>
         :root {
@@ -20,23 +20,6 @@
             --purple: #9b59b6;
         }
 
-        /* Evitar selecciones raras y zooms molestos en móvil */
-        * {
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            box-sizing: border-box;
-            touch-action: manipulation;
-        }
-
-        input[type="text"], select {
-            -webkit-user-select: text;
-            -moz-user-select: text;
-            -ms-user-select: text;
-            user-select: text;
-        }
-
         body {
             background-color: var(--bg);
             color: var(--text);
@@ -47,6 +30,7 @@
             justify-content: center;
             min-height: 100vh;
             margin: 0;
+            user-select: none;
             overflow-x: hidden;
             padding: 20px 0;
             position: relative;
@@ -87,14 +71,13 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.5);
             transition: transform 0.1s, background 0.2s;
             white-space: nowrap;
-            -webkit-tap-highlight-color: transparent;
         }
         .btn-header:hover {
             background: #4a3c2e;
             transform: scale(1.03);
         }
 
-        /* 🎭 VENTANAS MODALES */
+        /* 🎭 VENTANAS MODALES (PERFIL Y EXTRAS) */
         .modal-overlay-menu {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -193,7 +176,7 @@
             font-size: 12px;
         }
 
-        /* 🏅 LOGROS */
+        /* 🏅 CONTENEDOR DE LOGROS */
         .logros-seccion {
             width: 90%;
             text-align: left;
@@ -213,6 +196,13 @@
             max-height: 180px;
             overflow-y: auto;
             padding-right: 5px;
+        }
+        .logros-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+        .logros-grid::-webkit-scrollbar-thumb {
+            background: #523f30;
+            border-radius: 3px;
         }
         .logro-item {
             background: #19130e;
@@ -253,6 +243,7 @@
             margin-top: 5px;
         }
 
+        /* 🔔 CONTENEDOR DE NOTIFICACIONES FLOTANTES */
         #notificaciones-container {
             position: fixed;
             top: 20px;
@@ -265,6 +256,33 @@
             pointer-events: none;
         }
 
+        .notificacion-logro {
+            background: linear-gradient(135deg, #2c2017, #1c140e);
+            border: 2px solid var(--gold);
+            border-radius: 10px;
+            padding: 10px 14px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, fadeOut 0.5s linear 3.5s forwards;
+            pointer-events: auto;
+        }
+
+        @keyframes slideIn {
+            0% { transform: translateX(120%); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0.9) translateY(-10px); }
+        }
+
+        .notif-texto { display: flex; flex-direction: column; }
+        .notif-alerta { font-size: 10px; color: var(--gold); text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
+        .notif-titulo { font-size: 13px; font-weight: bold; color: #fff; }
+
         /* --- INTERFAZ DEL JUEGO PRINCIPAL --- */
         .btn-toggle-pasivo {
             background-color: var(--green);
@@ -276,7 +294,6 @@
             cursor: pointer;
             font-size: 12px;
             margin-bottom: 10px;
-            -webkit-tap-highlight-color: transparent;
         }
         .btn-toggle-pasivo.desactivado { background-color: var(--red); border-color: #c0392b; }
 
@@ -343,13 +360,13 @@
             transition: transform 0.04s ease-out;
             z-index: 10;
             filter: drop-shadow(0 10px 15px rgba(0,0,0,0.7));
-            background: none;
-            border: none;
-            outline: none;
-            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
         }
         .clicker-btn:active { transform: scale(0.85); }
 
+        /* CONTENEDOR RANGOS Y EVOLUCIÓN */
         .weapon-rank-container {
             width: 90%;
             max-width: 320px;
@@ -361,10 +378,32 @@
             text-align: center;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
         }
-        .weapon-rank { font-size: 12px; font-weight: bold; color: var(--text); margin-bottom: 5px; }
-        .weapon-next-rank-txt { font-size: 10px; color: #ff9f43; margin-bottom: 5px; font-style: italic; }
-        .weapon-progress-bar { width: 100%; background: #241c16; height: 6px; border-radius: 3px; overflow: hidden; border: 1px solid #3a2e24; }
-        .weapon-progress-fill { background: linear-gradient(90deg, var(--fire), var(--gold)); height: 100%; width: 0%; transition: width 0.1s ease; }
+        .weapon-rank {
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--text);
+            margin-bottom: 5px;
+        }
+        .weapon-next-rank-txt {
+            font-size: 10px;
+            color: #ff9f43;
+            margin-bottom: 5px;
+            font-style: italic;
+        }
+        .weapon-progress-bar {
+            width: 100%;
+            background: #241c16;
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+            border: 1px solid #3a2e24;
+        }
+        .weapon-progress-fill {
+            background: linear-gradient(90deg, var(--fire), var(--gold));
+            height: 100%;
+            width: 0%;
+            transition: width 0.1s ease;
+        }
 
         /* BARRA DE SKILLCHECK */
         .skillcheck-container {
@@ -372,6 +411,7 @@
         }
         .zona-verde { position: absolute; background: var(--green); height: 100%; box-shadow: 0 0 12px var(--green); }
         .linea-marcador { position: absolute; width: 6px; background: #fff; height: 100%; z-index: 20; box-shadow: 0 0 8px #fff; }
+        .skillcheck-container, .zona-verde, .linea-marcador { pointer-events: none; }
         .instrucciones-barra { font-size: 12px; color: #e74c3c; font-weight: bold; margin-top: -15px; margin-bottom: 15px; display: none; }
 
         /* NÚMEROS FLOTANTES */
@@ -390,7 +430,7 @@
             position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(255, 215, 0, 0.3); pointer-events: none; z-index: 3000; opacity: 0; display: none;
         }
 
-        /* MINIJUEGOS INTERNOS MODALES */
+        /* MINIJUEGOS INTERNOS */
         .modal-mision-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); display: flex; align-items: center; justify-content: center; z-index: 3000; visibility: hidden; opacity: 0; transition: opacity 0.2s;
         }
@@ -407,30 +447,30 @@
 
         /* J0 Escudos */
         .color-box { width: 60px; height: 60px; border-radius: 12px; margin-bottom: 10px; border: 3px solid white; display: flex; align-items: center; justify-content: center; font-size: 24px; }
-        .btn-color-switch { background: #34495e; color: white; border: 2px solid #5c758e; padding: 8px 16px; border-radius: 6px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+        .btn-color-switch { background: #34495e; color: white; border: 2px solid #5c758e; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
         .bg-azul { background: var(--mana) !important; box-shadow: 0 0 12px var(--mana); }
         .bg-rojo { background: var(--red) !important; box-shadow: 0 0 12px var(--red); }
 
         /* J1 Glifos */
         .glifo-box { font-size: 40px; background: #1c140e; padding: 8px 25px; border-radius: 12px; margin-bottom: 10px; }
         .glifo-opciones { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; }
-        .btn-glifo-opcion { background: #3d2d20; border: 2px solid #523f30; color: white; font-size: 20px; padding: 8px; border-radius: 8px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+        .btn-glifo-opcion { background: #3d2d20; border: 2px solid #523f30; color: white; font-size: 20px; padding: 8px; border-radius: 8px; cursor: pointer; }
 
         /* J2 Orden numérico */
         .num-secuencia-container { display: flex; gap: 10px; }
-        .btn-num-orden { background: #e67e22; border: 2px solid #ff9f43; color: black; font-weight: bold; font-size: 22px; width: 55px; height: 55px; border-radius: 50%; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+        .btn-num-orden { background: #e67e22; border: 2px solid #ff9f43; color: black; font-weight: bold; font-size: 22px; width: 55px; height: 55px; border-radius: 50%; cursor: pointer; }
         .btn-num-orden:disabled { background: #2c2520 !important; border-color: #443c35 !important; color: #665b50 !important; cursor: not-allowed; }
 
         /* J3 Puerta Castillo */
         .defensa-box { font-size: 38px; margin-bottom: 10px; }
         .controles-defensa { display: flex; gap: 20px; width: 100%; justify-content: center; }
-        .btn-direccion { background: #34495e; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 20px; cursor: pointer; font-weight: bold; -webkit-tap-highlight-color: transparent; }
+        .btn-direccion { background: #34495e; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 20px; cursor: pointer; font-weight: bold; }
 
         /* J4 Cristal de Maná */
         .slider-presion-bg { width: 90%; background: #221a14; height: 20px; border-radius: 10px; position: relative; border: 2px solid #000; margin-bottom: 10px; overflow: hidden;}
         .presion-safe-zone { position: absolute; background: var(--mana); height: 100%; width: 25%; box-shadow: inset 0 0 8px #fff; left: 37%; }
         .presion-pointer { position: absolute; background: #fff; width: 6px; height: 100%; left: 0%; will-change: left; }
-        .btn-presionar-cristal { background: var(--mana); color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 80%; -webkit-tap-highlight-color: transparent; }
+        .btn-presionar-cristal { background: var(--mana); color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 80%; }
 
         /* TIENDAS */
         .paneles-tienda { display: flex; flex-direction: column; gap: 15px; width: 90%; max-width: 450px; }
@@ -446,12 +486,14 @@
         .nombre-mejora { font-weight: bold; font-size: 13px; }
         .efecto-mejora { font-size: 11px; color: #c4b4a3; margin-top: 1px; }
 
-        .btn-comprar { color: #000; border: none; padding: 8px 10px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; min-width: 90px; text-align: center; -webkit-tap-highlight-color: transparent; }
+        .btn-comprar { color: #000; border: none; padding: 8px 10px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; min-width: 90px; text-align: center; }
         .btn-clic { background: var(--fire); color: white; }
         .btn-auto { background: var(--mana); color: white; }
         .btn-mision { background: #f1c40f; color: black; }
         .btn-runa { background: var(--purple); color: white; }
         .btn-comprar:disabled { background: #3d3025 !important; color: #695747 !important; cursor: not-allowed; }
+
+        .cantidad { font-size: 10px; padding: 2px 5px; border-radius: 4px; font-weight: bold; margin-left: 5px; }
 
         .barra-progreso-mision { width: 100%; background: #1a1512; height: 6px; border-radius: 3px; margin-top: 6px; overflow: hidden; display: none; }
         .progreso-mision-relleno { background: #f1c40f; height: 100%; width: 0%; }
@@ -465,9 +507,13 @@
     <div id="notificaciones-container"></div>
 
     <div class="header-container">
-        <button class="btn-header" onclick="abrirMenu('extras-menu-overlay')">Extras ⚔️</button>
+        <button class="btn-header" onclick="abrirMenu('extras-menu-overlay')">
+            Extras ⚔️
+        </button>
         <h1>Forja de Héroes 🌋</h1>
-        <button class="btn-header" onclick="abrirMenu('perfil-menu-overlay')">Perfil <span id="header-avatar-mini">🧔</span></button>
+        <button class="btn-header" onclick="abrirMenu('perfil-menu-overlay')">
+            Perfil <span id="header-avatar-mini">🧔</span>
+        </button>
     </div>
 
     <div class="modal-overlay-menu" id="perfil-menu-overlay">
@@ -536,6 +582,7 @@
                     <button class="btn-mision btn-comprar" id="btn-mision-4" onclick="abrirTutorialMision(4)">Enviar</button>
                 </div>
             </div>
+
             <button class="btn-volver-juego" onclick="cerrarMenu('extras-menu-overlay')">⚒️ Volver al yunque</button>
         </div>
     </div>
@@ -562,7 +609,7 @@
     </div>
 
     <div class="clicker-area" id="clicker-area">
-        <button class="clicker-btn" id="arma-btn">🔪</button>
+        <div class="clicker-btn" id="arma-btn">🔪</div>
     </div>
 
     <div class="weapon-rank-container">
@@ -614,7 +661,7 @@
                     <div class="presion-safe-zone" id="cristal-zona-azul"></div>
                     <div class="presion-pointer" id="cristal-puntero"></div>
                 </div>
-                <button class="btn-presionar-cristal" id="btn-valvula-m4">Pulsar / Mantener Válvula</button>
+                <button class="btn-presionar-cristal" id="btn-valvula-mana">Pulsar / Mantener Válvula</button>
             </div>
         </div>
     </div>
@@ -676,7 +723,7 @@
         let idAnimacionMision4 = null;
 
         const tiendaAuto = [{ id: 0, precioBase: 15, aporte: 1 }, { id: 1, precioBase: 100, aporte: 5 }, { id: 2, precioBase: 600, aporte: 30 }];
-        const tiendaClic = [{ id: 0, precioBase: 25, aporte: 1 }, { id: 1, precioBase: 150, aporte: 6 }, { id: 2, precioBase: 1200, aporte: 35 }];
+        const tiendaClic = [{ id: 0, precioBase: 25, aporte: 1 }, { id: 1, precioBase: 150, carrot: 6, aporte: 1 }, { id: 1, precioBase: 150, aporte: 6 }, { id: 2, precioBase: 1200, aporte: 35 }];
         const tiendaRunas = [{ id: 0, precioBase: 1500, multiplicador: 0.15 }];
         
         const misionesConfig = [
@@ -808,16 +855,28 @@
 
         function ejecutarPrestigio() {
             let favores = calcularFavoresAGanar();
-            if (favores > 0 && confirm(`¿Reiniciar forja por ${favores} Favores Reales?`)) {
+            if (favores > 0 && confirm(`¿Reiniciar forja por ${favores} Favores Reales? Se restablecerán tus recursos, tus mejoras, tu RANGO de arma y los desafíos en curso.`)) {
                 rpg.favoresReales += favores;
-                rpg.hierro = 0; rpg.hierroTotalVida = 0; rpg.golpesYunque = 0; 
-                rpg.cantidadesAuto = [0, 0, 0]; rpg.cantidadesClic = [0, 0, 0];
-                frenesiTiempoRestante = 0; document.getElementById("frenesi").style.display = "none";
+                
+                rpg.hierro = 0; 
+                rpg.hierroTotalVida = 0; 
+                rpg.golpesYunque = 0; 
+                
+                rpg.cantidadesAuto = [0, 0, 0]; 
+                rpg.cantidadesClic = [0, 0, 0];
+                
+                frenesiTiempoRestante = 0; 
+                document.getElementById("frenesi").style.display = "none";
+                
                 misionesEstado = misionesEstado.map((est, idx) => {
                     document.getElementById(`mision-progbar-${idx}`).style.display = "none";
                     return { activa: false, inicio: 0 };
                 });
-                evolucionarArma(); recalcularProduccion(); guardarRpg(); actualizarUI();
+                
+                evolucionarArma(); 
+                recalcularProduccion(); 
+                guardarRpg(); 
+                actualizarUI();
             }
         }
 
@@ -834,21 +893,22 @@
             if (rpg.hierro >= precio) { rpg.hierro -= precio; rpg.cantidadesRunas[id] = (rpg.cantidadesRunas[id] || 0) + 1; recalcularProduccion(); guardarRpg(); actualizarUI(); }
         }
 
-        // --- SISTEMA DE CONTROL DE ENTRADA UNIFICADO (PC/MÓVIL TOTALMENTE ARREGLADO) ---
         const armaBtn = document.getElementById("arma-btn");
         const clickerArea = document.getElementById("clicker-area");
 
-        function presionarYunqueEntrada(e) {
-            e.preventDefault(); 
+        // --- SOLUCIÓN UNIFICADA PARA EVENTOS MÓVILES Y ESCRITORIO ---
+        function handlerIniciarPresion(e) {
             if (yunqueMinijuegoActivo || misionesUiActiva) return;
+            if (e.cancelable) e.preventDefault();
             
+            armaBtn.classList.add("cargando"); 
             tiempoPresionado = Date.now();
-            // Disparar barra de precisión si mantiene pulsado más de 400ms
             idTemporizadorCarga = setTimeout(activarBarraYunque, 400); 
         }
 
-        function soltarYunqueEntrada(e) {
-            e.preventDefault();
+        function handlerFinalizarPresion(e) {
+            if (tiempoPresionado === 0) return;
+            armaBtn.classList.remove("cargando"); 
             clearTimeout(idTemporizadorCarga);
             
             if (yunqueMinijuegoActivo) {
@@ -867,11 +927,15 @@
             tiempoPresionado = 0;
         }
 
-        // Eventos cruzados sin duplicaciones
-        armaBtn.addEventListener("mousedown", presionarYunqueEntrada);
-        armaBtn.addEventListener("touchstart", presionarYunqueEntrada, { passive: false });
-        window.addEventListener("mouseup", soltarYunqueEntrada);
-        window.addEventListener("touchend", soltarYunqueEntrada, { passive: false });
+        // Escritorio (Ratón)
+        armaBtn.addEventListener("mousedown", handlerIniciarPresion);
+        window.addEventListener("mouseup", handlerFinalizarPresion);
+
+        // Móvil (Pantalla Táctil)
+        armaBtn.addEventListener("touchstart", handlerIniciarPresion, { passive: false });
+        window.addEventListener("touchend", handlerFinalizarPresion, { passive: true });
+        armaBtn.addEventListener("touchcancel", handlerFinalizarPresion, { passive: true });
+
 
         function activarBarraYunque() {
             yunqueMinijuegoActivo = true; posicionMarcador = 0; direccionMarcador = 1;
@@ -931,7 +995,6 @@
             guardarRpg(); actualizarUI();
         }
 
-        // --- SISTEMA MINIJUEGOS Y TABLÓN ---
         function abrirTutorialMision(id) {
             if (misionesUiActiva || yunqueMinijuegoActivo) return;
             let config = misionesConfig[id];
@@ -977,7 +1040,8 @@
                     if(!juego2ListaNumeros.includes(n)) juego2ListaNumeros.push(n);
                 }
                 juego2IndiceSiguiente = 0;
-                let container = document.getElementById("ruinas-numeros-box"); container.innerHTML = "";
+                let container = document.getElementById("ruunas-numeros-box") || document.getElementById("ruinas-numeros-box"); 
+                container.innerHTML = "";
                 let visuales = [...juego2ListaNumeros].sort(() => Math.random() - 0.5);
                 visuales.forEach(num => {
                     let b = document.createElement("button"); b.className = "btn-num-orden"; b.textContent = num;
@@ -1033,14 +1097,14 @@
             idAnimacionMision4 = requestAnimationFrame(actualizarFisicasMision4);
         }
 
-        // Corrección de controles táctiles en la válvula del Cristal de Maná (Misión 4)
-        const btnValvulaM4 = document.getElementById("btn-valvula-m4");
-        function activarVálvulaM4(e) { e.preventDefault(); juego4Presionando = true; }
-        function desactivarVálvulaM4(e) { e.preventDefault(); juego4Presionando = false; }
-        btnValvulaM4.addEventListener("mousedown", activarVálvulaM4);
-        btnValvulaM4.addEventListener("touchstart", activarVálvulaM4, { passive: false });
-        btnValvulaM4.addEventListener("mouseup", desactivarVálvulaM4);
-        btnValvulaM4.addEventListener("touchend", desactivarVálvulaM4, { passive: false });
+        // Soporte móvil para la Válvula de Maná (Misión 4)
+        const btnValvula = document.getElementById("btn-valvula-mana");
+        if(btnValvula) {
+            btnValvula.addEventListener("mousedown", presionarValvulaCristal);
+            btnValvula.addEventListener("mouseup", soltarValvulaCristal);
+            btnValvula.addEventListener("touchstart", (e) => { e.preventDefault(); presionarValvulaCristal(); }, { passive: false });
+            btnValvula.addEventListener("touchend", soltarValvulaCristal, { passive: true });
+        }
 
         function conmutarEscudoCaravana() {
             let btn = document.getElementById("caravana-player-btn");
@@ -1055,6 +1119,8 @@
             else finalizarMisionPorFracaso("❌ ¡Mal orden!");
         }
         function defenderCastillo(lado) { if(lado === juego3LadoAtaque) completarMisionConExito(); else finalizarMisionPorFracaso("❌ ¡Flanco indefenso!"); }
+        function presionarValvulaCristal() { juego4Presionando = true; }
+        function soltarValvulaCristal() { juego4Presionando = false; }
 
         function completarMisionConExito() {
             let id = idMisionSeleccionada; 
@@ -1170,7 +1236,7 @@
             misionesConfig.forEach(config => {
                 if (!misionesEstado[config.id].activa) {
                     let btn = document.getElementById(`btn-mision-${config.id}`);
-                    if (btn) btn.disabled = (rpg.hierro < config.coste || yunqueMinijuegoActivo);
+                    btn.disabled = (rpg.hierro < config.coste || yunqueMinijuegoActivo);
                 }
             });
             recalcularProduccion();
